@@ -11,7 +11,7 @@ FORMAT = '[%(asctime)-15s] %(message)s'
 logging.basicConfig(format=FORMAT, level=logging.DEBUG, filename='bot.log', filemode='a')
 
 URL = 'https://www.worldometers.info/coronavirus/country/us/'
-SHORT_HEADERS = ['Sno', 'State','Total','New','Death','NewDeath','Rec','Act']
+SHORT_HEADERS = [ 'State','Total','New','Death','NewDeath','Rec','Act']
 FILE_NAME = 'corona_us_data.json'
 extract_contents = lambda row: [x.text.replace('\n', '') for x in row]
 
@@ -42,6 +42,7 @@ if __name__ == '__main__':
         response = requests.get(URL).content
         soup = BeautifulSoup(response, 'html.parser')
         header = extract_contents(soup.tr.find_all('th'))
+        header = header[:-1]
 
         stats = []
         all_rows = soup.find_all('tr')
@@ -52,7 +53,7 @@ if __name__ == '__main__':
                 if any([s.lower() in stat[0].lower() for s in interested_states]):
                     if stat[0] not in visited:
                         visited.add(stat[0])
-                        stats.append(stat)
+                        stats.append(stat[:-1])
         
         past_data = load()
         for xi in stats:
@@ -88,7 +89,6 @@ if __name__ == '__main__':
             # override the latest one now
             for state in cur_data:
                 past_data[state]['latest'] = cur_data[state][current_time]
-                past_data[state][current_time] = cur_data[state][current_time]
             save(past_data)
 
             table = tabulate(stats, headers=SHORT_HEADERS, tablefmt='psql')
