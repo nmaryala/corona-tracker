@@ -11,7 +11,7 @@ FORMAT = '[%(asctime)-15s] %(message)s'
 logging.basicConfig(format=FORMAT, level=logging.DEBUG, filename='bot.log', filemode='a')
 
 URL = 'https://www.worldometers.info/coronavirus/country/us/'
-SHORT_HEADERS = [ 'State','Total','New','Death','NewDeath','Rec','Act']
+SHORT_HEADERS = [ 'State','Total','New','Death','NewDeath','Act']
 FILE_NAME = 'corona_us_data.json'
 extract_contents = lambda row: [x.text.replace('\n', '') for x in row]
 
@@ -47,13 +47,13 @@ if __name__ == '__main__':
         stats = []
         all_rows = soup.find_all('tr')
         visited = set()
-        for row in all_rows:
+        for row in all_rows[:60]:
             stat = extract_contents(row.find_all('td'))
             if stat:
                 if any([s.lower() in stat[0].lower() for s in interested_states]):
                     if stat[0] not in visited:
                         visited.add(stat[0])
-                        stats.append(stat[:-1])
+                        stats.append(stat[:6])
         
         past_data = load()
         for xi in stats:
