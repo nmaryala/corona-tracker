@@ -47,7 +47,7 @@ if __name__ == '__main__':
         stats = []
         all_rows = soup.find_all('tr')
         visited = set()
-        for row in all_rows[:60]:
+        for row in all_rows[:63]:
             stat = extract_contents(row.find_all('td'))
             if stat:
                 if any([s.lower() in stat[0].lower() for s in interested_states]):
